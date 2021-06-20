@@ -115,4 +115,4 @@ Because the `<topichead>` is inserted *inside* the `<submap>` element, any title
 This plugin has the following known limitation:
 
 - Submap variables in titles are not resolved if the older `preprocess` pipeline is used instead of the newer `preprocess2` pipeline.
-- 
+
