@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="dita-ot/plugin.rnc" type="application/relax-ng-compact-syntax"?>
+<plugin id="com.synopsys.mapref-topichead">
+
+  <!--
+    -| when a <mapref> has @outputclass="topichead",
+    -| this places the map contents into a <topichead> titled after the map
+    -->
+  <feature extension="dita.xsl.mapref" value="mapref-topichead.xsl" type="file"/>
+
+</plugin>

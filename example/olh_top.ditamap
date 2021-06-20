@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="urn:oasis:names:tc:dita:rng:map.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<map>
+    <title>Online Help</title>
+    <mapref href="book1.ditamap" keyscope="book1" outputclass="topichead"/>
+    <mapref href="book2.ditamap" keyscope="book2" outputclass="topichead"/>
+</map>

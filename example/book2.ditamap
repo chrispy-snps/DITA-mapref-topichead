@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="urn:oasis:names:tc:dita:rng:bookmap.rng" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<bookmap keyscope="book2">
+    <!-- book1 uses <mainbooktitle>, book2 uses <title> -->
+    <title>Book 2 for <ph keyref="Product"/></title>
+    <frontmatter>
+        <keydef keys="Product">
+            <topicmeta>
+                <keywords>
+                    <keyword>My Product 2</keyword>
+                </keywords>
+            </topicmeta>
+        </keydef>
+    </frontmatter>
+    <chapter href="book2/chapter_1.dita">
+        <topicref href="book2/chapter_1_topic.dita"/>
+    </chapter>
+    <chapter href="book2/chapter_2.dita">
+        <topicref href="book2/chapter_2_topic.dita"/>
+    </chapter>
+    <chapter href="book2/chapter_3.dita">
+        <topicref href="book2/chapter_3_topic.dita"/>
+    </chapter>
+</bookmap>
