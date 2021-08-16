@@ -21,7 +21,8 @@ This file overrides a template in
     -| search for MODIFIED and ADDED below to see how this differs from the original template
     -| (left-indented lines are new)
     -->
-  <xsl:template match="*[contains(@class, ' map/topicref ')][(@format, @dita-ot:orig-format) = 'ditamap']" priority="10">
+  <xsl:template match="*[contains(@class, ' map/topicref ')][(@format, @dita-ot:orig-format) = 'ditamap'][not(@scope = 'peer')]
+                        [tokenize(@outputclass, '\s+') = 'topichead']" priority="10">
     <xsl:param name="refclass" select="(@dita-ot:orig-class, @class)[1]" as="xs:string"/>
     <xsl:param name="relative-path" as="xs:string" tunnel="yes">#none#</xsl:param>
     <xsl:param name="mapref-id-path" as="xs:string*"/>
