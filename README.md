@@ -91,28 +91,27 @@ that reads submap contents into a temporary `<submap>` container element:
 </submap>
 ```
 
-(The `<submap>` containers keep submap keyscopes separated from each other. They are eventually unwrapped by the `clean-map` task at the end of the preprocessing pipeline.)
+(The `<submap>` containers keep submap keyscopes separated from each other during preprocessing. They are eventually unwrapped by the `clean-map` task at the end of the preprocessing pipeline.)
 
-This plugin modifies that template so that when `@outputclass` contains the `topichead` keyword, the submap contents are written as follows instead:
+This plugin modifies that template so that when `@outputclass` contains the `topichead` keyword, the `<submap>` contents are wrapped in a `<topichead>` element:
 
 ```
-<submap>
-    <topichead>
-        <topicmeta>
-            <navtitle>...submap title...</navtitle>
-        </topicmeta>
+<topichead>
+    <topicmeta>
+        <navtitle>...submap title...</navtitle>
+    </topicmeta>
+    <submap>
         ...submap contents...
-    </topichead>
-</submap>
+    </submap>
+</topichead>
 ```
 
-The navigation title comes from `<booktitle>/<mainbooktitle>` or `<title>`, whichever is defined. (Conveniently, the template already captures the submap's metadata, including title metadata, into a `$targetTitleAndTopicmeta` variable.)
+The navigation title of the `<topichead>` is set to the title of the referenced map. The title comes from `<booktitle>`/`<mainbooktitle>` or `<title>` of the referenced map, whichever is defined.
 
-Because the `<topichead>` is inserted *inside* the `<submap>` element, any title references to key values are correctly resolved within the submap's scope.
+The following are promoted from the `<submap>` element to the `<topichead>` element, if defined:
 
-## Limitations
+- Profiling condition attributes
+- `@keyscope` attribute (from the `<mapref>`, the referenced `<map>`, or both)
+- `<ditavalref>` element
 
-This plugin has the following known limitation:
-
-- Submap variables in titles are not resolved if the older `preprocess` pipeline is used instead of the newer `preprocess2` pipeline.
-
+This plugin post-processes the results of `<xsl:next-match/>`. This approach allows it to work together with other plugins that modify `<mapref>`-processing behaviors.
