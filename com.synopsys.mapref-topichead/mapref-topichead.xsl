@@ -5,41 +5,52 @@
     exclude-result-prefixes="xs dita-ot"
     version="2.0">
 
+<!--
+
+This file modifies behaviors defined in
+
+
+-->
+
   <!--
-    -| this enhances the general-purpose <mapref>-reading template in
+    -| this plugin modifies the general-purpose <mapref>-reading template in
     -|
-    -|   <dita-ot>/plugins/org.dita.base/xsl/preprocess/maprefImpl.xsl
+    -| <dita-ot>/plugins/org.dita.base/xsl/preprocess/maprefImpl.xsl
     -|
-    -| so that for <mapref outputclass="topichead"> elements, the submap
-    -| contents are placed into a <topichead> titled after the map
+    -| to place submap contents into a <topichead> titled after the map
+    -| when the <mapref> has @outputclass="topichead"
     -->
+
+
+  <!-- get the default results, then post-process them -->
   <xsl:template match="*[contains(@class, ' map/topicref ')][(@format, @dita-ot:orig-format) = 'ditamap'][not(@scope = 'peer')]
                         [not(contains(@class, ' mapgroup-d/topichead '))]
                         [tokenize(@outputclass, '\s+') = 'topichead']" priority="10">
-    <xsl:param name="refclass" select="(@dita-ot:orig-class, @class)[1]" as="xs:string"/>
-    <xsl:param name="relative-path" as="xs:string" tunnel="yes">#none#</xsl:param>
-    <xsl:param name="mapref-id-path" as="xs:string*"/>
-    <xsl:param name="referTypeFlag" as="xs:string">#none#</xsl:param>
-
-    <!-- get the template-applied <submap> element -->
-    <xsl:variable name="submap" as="node()?">
+    <!-- we use moded templates because the <mapref> template can return multiple elements
+         (e.g. if @keys is defined in the <mapref>) -->
+    <xsl:variable name="original-results">
       <xsl:next-match/>
     </xsl:variable>
+    <xsl:apply-templates select="$original-results" mode="mapref-topichead"/>
+  </xsl:template>
 
-    <!-- these are the attributes we will promote from <submap> to <topichead> -->
+
+  <!-- for the <submap> element, wrap it in a <topichead> -->
+  <xsl:template match="submap" mode="mapref-topichead">
+    <!-- collect the attributes to promote from <submap> to <topichead> -->
     <xsl:variable name="attributes-to-promote" as="attribute()*">
-      <xsl:sequence select="$submap/(@keyscope)"/>  <!-- <topichead> title should be evaluated in map's keyscope -->
-      <xsl:sequence select="$submap/(@audience, @platform, @product, @props, @otherprops, @rev)"/>  <!-- <topichead> title should use map's profiling conditions -->
+      <xsl:sequence select="@keyscope"/>  <!-- <topichead> title should be evaluated in map's keyscope -->
+      <xsl:sequence select="(@audience, @platform, @product, @props, @otherprops, @rev)"/>  <!-- <topichead> title should use map's profiling conditions -->
     </xsl:variable>
 
-    <!-- these are the elements we will promote from <submap> to <topichead> -->
+    <!-- collect the elements to promote from <submap> to <topichead> -->
     <xsl:variable name="elements-to-promote" as="node()*">
-      <xsl:sequence select="$submap/ditavalref"/>  <!-- <topichead> title should use map's DITAVAL filtering -->
+      <xsl:sequence select="ditavalref"/>  <!-- <topichead> title should use map's DITAVAL filtering -->
     </xsl:variable>
 
     <!-- compute a new @outputclass with the "topichead" keyword removed -->
     <xsl:variable name="outputclass-updated" as="attribute()?">
-      <xsl:variable name="remaining-keywords" as="item()*" select="tokenize($submap/@outputclass, '\s+')[. ne 'topichead']"/>
+      <xsl:variable name="remaining-keywords" as="item()*" select="tokenize(@outputclass, '\s+')[. ne 'topichead']"/>
       <xsl:if test="count($remaining-keywords) > 0">
         <xsl:attribute name="outputclass">
           <xsl:value-of select="string-join($remaining-keywords, ' ')"/>
@@ -49,24 +60,33 @@
 
     <!-- make our wrapper <topichead> element -->
     <topichead class="+ map/topicref mapgroup-d/topichead ">
-      <xsl:sequence select="$attributes-to-promote"/>  <!-- apply the attributes we promoted -->
+      <xsl:sequence select="$attributes-to-promote"/>  <!-- copy the attributes to promote -->
 
       <!-- make a <navtitle> from the title metadata in our <submap> -->
       <topicmeta class="- map/topicmeta ">
         <navtitle class="- topic/navtitle ">
-          <xsl:sequence select="$submap/submap-topicmeta/submap-title/node()"/>
+          <xsl:sequence select="submap-topicmeta/submap-title/node()"/>
         </navtitle>
       </topicmeta>
 
-      <xsl:sequence select="$elements-to-promote"/>  <!-- apply the elements we promoted -->
+      <xsl:sequence select="$elements-to-promote"/>  <!-- copy the elements to promote -->
 
-      <!-- instantiate our <submap>, minus the stuff we promoted -->
-      <xsl:copy select="$submap">
+      <!-- copy the <submap>, minus the stuff we promoted -->
+      <!-- (we deep-copy the contents because this template is not needed below <submap>) -->
+      <xsl:copy select=".">
         <xsl:sequence select="$outputclass-updated"/>
         <xsl:sequence select="@* except (@outputclass, $attributes-to-promote)"/>
         <xsl:sequence select="node() except $elements-to-promote"/>
       </xsl:copy>
     </topichead>
+  </xsl:template>
+
+
+  <!-- copy other stuff as-is -->
+  <xsl:template match="@*|node()" mode="mapref-topichead">
+    <xsl:copy>
+      <xsl:apply-templates select="@*|node()" mode="mapref-topichead"/>
+    </xsl:copy>
   </xsl:template>
  
 </xsl:stylesheet>
