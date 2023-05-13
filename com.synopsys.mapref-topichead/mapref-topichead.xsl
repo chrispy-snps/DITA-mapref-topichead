@@ -3,7 +3,7 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:dita-ot="http://dita-ot.sourceforge.net/ns/201007/dita-ot"
     exclude-result-prefixes="xs dita-ot"
-    version="2.0">
+    version="3.0">
 
 <!--
 
@@ -23,9 +23,9 @@ This file modifies behaviors defined in
 
 
   <!-- get the default results, then post-process them -->
-  <xsl:template match="*[contains(@class, ' map/topicref ')][(@format, @dita-ot:orig-format) = 'ditamap'][not(@scope = 'peer')]
-                        [not(contains(@class, ' mapgroup-d/topichead '))]
-                        [tokenize(@outputclass, '\s+') = 'topichead']" priority="10">
+  <xsl:template match="*[contains-token(@class, 'map/topicref')][(@format, @dita-ot:orig-format) = 'ditamap'][not(@scope = 'peer')]
+                        [not(contains-token(@class, 'mapgroup-d/topichead'))]
+                        [contains-token(@outputclass, 'topichead')]" priority="10">
     <!-- we use moded templates because the <mapref> template can return multiple elements
          (e.g. if @keys is defined in the <mapref>) -->
     <xsl:variable name="original-results">
@@ -36,6 +36,8 @@ This file modifies behaviors defined in
     </xsl:apply-templates>
   </xsl:template>
 
+  <!-- copy stuff we're not interested in -->
+  <xsl:mode name="mapref-topichead" on-no-match="shallow-copy"/>
 
   <!-- for the <submap> element, wrap it in a <topichead> -->
   <xsl:template match="submap" mode="mapref-topichead">
@@ -85,13 +87,5 @@ This file modifies behaviors defined in
     </topichead>
   </xsl:template>
 
-
-  <!-- copy other stuff as-is -->
-  <xsl:template match="@*|node()" mode="mapref-topichead">
-    <xsl:copy>
-      <xsl:apply-templates select="@*|node()" mode="mapref-topichead"/>
-    </xsl:copy>
-  </xsl:template>
- 
 </xsl:stylesheet>
 
