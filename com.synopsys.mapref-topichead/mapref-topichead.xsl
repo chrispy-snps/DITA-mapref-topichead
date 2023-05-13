@@ -31,12 +31,15 @@ This file modifies behaviors defined in
     <xsl:variable name="original-results">
       <xsl:next-match/>
     </xsl:variable>
-    <xsl:apply-templates select="$original-results" mode="mapref-topichead"/>
+    <xsl:apply-templates select="$original-results" mode="mapref-topichead">
+      <xsl:with-param name="orig-mapref" select="."/>  <!-- include original <mapref> so we can promote some of its metadata -->
+    </xsl:apply-templates>
   </xsl:template>
 
 
   <!-- for the <submap> element, wrap it in a <topichead> -->
   <xsl:template match="submap" mode="mapref-topichead">
+    <xsl:param name="orig-mapref" as="item()"/>
     <!-- collect the attributes to promote from <submap> to <topichead> -->
     <xsl:variable name="attributes-to-promote" as="attribute()*">
       <xsl:sequence select="@keyscope"/>  <!-- <topichead> title should be evaluated in map's keyscope -->
@@ -67,9 +70,10 @@ This file modifies behaviors defined in
         <navtitle class="- topic/navtitle ">
           <xsl:sequence select="submap-topicmeta/submap-title/node()"/>
         </navtitle>
+        <xsl:sequence select="$orig-mapref/topicmeta/*[not(self::navtitle)]"/>  <!-- copy <mapref> metadata, such as <shortdesc> -->
       </topicmeta>
 
-      <xsl:sequence select="$elements-to-promote"/>  <!-- copy the elements to promote -->
+      <xsl:sequence select="$elements-to-promote"/>  <!-- copy the <submap> elements to promote -->
 
       <!-- copy the <submap>, minus the stuff we promoted -->
       <!-- (we deep-copy the contents because this template is not needed below <submap>) -->

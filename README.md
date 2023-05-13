@@ -113,5 +113,6 @@ The following are promoted from the `<submap>` element to the `<topichead>` elem
 - Profiling condition attributes
 - `@keyscope` attribute (from the `<mapref>`, the referenced `<map>`, or both)
 - `<ditavalref>` element
+- `<topicmeta>` child elements (such as `<shortdesc>`)
 
 This plugin post-processes the results of `<xsl:next-match/>`. This approach allows it to work together with other plugins that modify `<mapref>`-processing behaviors.
