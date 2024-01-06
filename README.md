@@ -34,6 +34,8 @@ Install the following provided plugin in your DITA-OT:
 com.synopsys.mapref-topichead/
 ```
 
+Note: DITA-OT versions prior to 3.7 do not reliably resolve variables in submap titles.
+
 ## Usage
 
 To have a `<mapref>` contribute its own level of navigation hierarchy, include the `topichead` keyword value in its `@outputclass` value:
