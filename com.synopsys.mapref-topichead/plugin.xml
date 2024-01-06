@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-model href="dita-ot/plugin.rnc" type="application/relax-ng-compact-syntax"?>
-<plugin id="com.synopsys.mapref-topichead">
+<plugin id="com.synopsys.mapref-topichead" version="1.0.0">
 
   <!--
     -| when a <mapref> has @outputclass="topichead",
