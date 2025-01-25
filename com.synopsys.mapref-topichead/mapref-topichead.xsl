@@ -66,6 +66,7 @@ This file modifies behaviors defined in
     <!-- make our wrapper <topichead> element -->
     <topichead class="+ map/topicref mapgroup-d/topichead ">
       <xsl:sequence select="$attributes-to-promote"/>  <!-- copy the attributes to promote -->
+      <xsl:sequence select="$outputclass-updated"/>
 
       <!-- make a <navtitle> from the title metadata in our <submap> -->
       <topicmeta class="- map/topicmeta ">
@@ -80,7 +81,6 @@ This file modifies behaviors defined in
       <!-- copy the <submap>, minus the stuff we promoted -->
       <!-- (we deep-copy the contents because this template is not needed below <submap>) -->
       <xsl:copy select=".">
-        <xsl:sequence select="$outputclass-updated"/>
         <xsl:sequence select="@* except (@outputclass, $attributes-to-promote)"/>
         <xsl:sequence select="node() except $elements-to-promote"/>
       </xsl:copy>
